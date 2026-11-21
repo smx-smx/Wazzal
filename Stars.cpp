@@ -39,8 +39,10 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hInstNULL, LPSTR lpszCmdLine, int nCmdShow){	
-	windowed_mode = (strstr(lpszCmdLine, "-window") != NULL) || (strstr(lpszCmdLine, "/window") != NULL);
+	windowed_mode = (strstr(lpszCmdLine, "-window") != NULL);
+	if (!windowed_mode) windowed_mode = (strstr(lpszCmdLine, "/window") != NULL);
 	startApplication(hInstance);	
+	return 0;
 }
 // Switch the main window between the fullscreen popup and a regular window.
 static void ApplyWindowStyle(void)
