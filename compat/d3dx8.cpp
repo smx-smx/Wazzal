@@ -155,14 +155,17 @@ public:
         D3DXMATRIX m;
         MatrixIdentity(&m);
         m._41 = x; m._42 = y; m._43 = z;
-        return MultMatrix(&m);
+        // Local operations left-multiply (about the object's local origin).
+        m_stack.back() = MatrixMultiply(m, m_stack.back());
+        return S_OK;
     }
 
     virtual HRESULT ScaleLocal(FLOAT x, FLOAT y, FLOAT z) {
         D3DXMATRIX m;
         MatrixIdentity(&m);
         m._11 = x; m._22 = y; m._33 = z;
-        return MultMatrix(&m);
+        m_stack.back() = MatrixMultiply(m, m_stack.back());
+        return S_OK;
     }
 
     virtual HRESULT RotateYawPitchRollLocal(FLOAT yaw, FLOAT pitch, FLOAT roll) {
@@ -182,7 +185,8 @@ public:
         m._32 = sr * sy + cr * sp * cy;
         m._33 = cr * cp;
         m._44 = 1.0f;
-        return MultMatrix(&m);
+        m_stack.back() = MatrixMultiply(m, m_stack.back());
+        return S_OK;
     }
 
     virtual D3DXMATRIX* GetTop() { return &m_stack.back(); }
