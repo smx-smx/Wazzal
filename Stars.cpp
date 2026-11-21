@@ -30,6 +30,7 @@ HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];								// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];								// The title bar text
 HWND hWnd;
+bool windowed_mode = false;		// -windowed command line switch
 
 // Foward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -38,8 +39,44 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hInstNULL, LPSTR lpszCmdLine, int nCmdShow){	
+	windowed_mode = (strstr(lpszCmdLine, "-window") != NULL) || (strstr(lpszCmdLine, "/window") != NULL);
 	startApplication(hInstance);	
 }
+// Switch the main window between the fullscreen popup and a regular window.
+static void ApplyWindowStyle(void)
+{
+	if (windowed_mode) {
+		DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+		RECT rc = { 0, 0, 1024, 768 };
+		AdjustWindowRect(&rc, style, FALSE);
+		int w = rc.right - rc.left;
+		int h = rc.bottom - rc.top;
+		int x = (GetSystemMetrics(SM_CXSCREEN) - w) / 2;
+		int y = (GetSystemMetrics(SM_CYSCREEN) - h) / 2;
+		SetWindowLong(hWnd, GWL_STYLE, style);
+		SetWindowPos(hWnd, HWND_TOP, x, y, w, h, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+		while (ShowCursor(TRUE) < 0) { }
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+	} else {
+		SetWindowLong(hWnd, GWL_STYLE, WS_MAXIMIZE | WS_VISIBLE | WS_POPUP);
+		ShowCursor(FALSE);
+		SetCursor(NULL);
+	}
+}
+
+// The Direct3D hardware cursor only works in fullscreen; windowed mode uses
+// the regular Windows cursor instead.
+static void ApplyDeviceCursor(void)
+{
+	cursor_shown = false;
+	if (windowed_mode) {
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+	} else {
+		m_pDevice->ShowCursor(FALSE);
+		D3DUtil_SetDeviceCursor(m_pDevice, mouse_cursor);
+	}
+}
+
 
 void startApplication(HINSTANCE hInstance){
 	MSG msg;
@@ -164,6 +201,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, (LPCTSTR)IDI_ICON4);
 
 	mouse_cursor=LoadIcon(hInstance, (LPCTSTR)IDI_ICON1);
+	if (windowed_mode) wcex.hCursor = (HCURSOR)mouse_cursor;
 	//mouse_cursor=(HICON)LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0);
 
 	return RegisterClassEx(&wcex);
@@ -184,10 +222,19 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    //HWND hWnd;
 
    hInst = hInstance; // Store instance handle in our global variable
-	RECT rDesktop;
+   RECT rDesktop;
     SystemParametersInfo(SPI_GETWORKAREA, NULL, &rDesktop, NULL);
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_EX_TOPMOST,
-      (rDesktop.left+rDesktop.right)/2-512, (rDesktop.top+rDesktop.bottom)/2-384, 1024, 768, NULL, NULL, hInstance, NULL);
+   DWORD winstyle = WS_POPUP;
+   int winw = 1024, winh = 768;
+   if (windowed_mode) {
+       winstyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+       RECT wr = { 0, 0, 1024, 768 };
+       AdjustWindowRect(&wr, winstyle, FALSE);
+       winw = wr.right - wr.left;
+       winh = wr.bottom - wr.top;
+   }
+   hWnd = CreateWindow(szWindowClass, szTitle, winstyle,
+      (rDesktop.left+rDesktop.right)/2-winw/2, (rDesktop.top+rDesktop.bottom)/2-winh/2, winw, winh, NULL, NULL, hInstance, NULL);
 		//(rDesktop.left+rDesktop.right)/2-50, (rDesktop.top+rDesktop.bottom)/2-50, (rDesktop.left+rDesktop.right)/2+50, (rDesktop.top+rDesktop.bottom)/2+50, NULL, NULL, hInstance, NULL);
    //CreateWindowEx(0, m_szAppName, m_szAppTitle, WS_OVERLAPPEDWINDOW, //& ~WS_THICKFRAME,
    //     160, rDesktop.bottom - 150, 300, 150, NULL, NULL, m_hInstance, NULL);
@@ -384,8 +431,10 @@ void init(void)
 
 	
 	//alustaa 3d:n	
-	ShowCursor(false);	
-	SetCursor(NULL);
+	if (!windowed_mode) {
+		ShowCursor(false);
+		SetCursor(NULL);
+	}
 	LoadCursor(NULL, IDC_ARROW);
 	initkeyb();
 	createscreen();
@@ -546,12 +595,8 @@ void init(void)
 	moveparts(5);//siirtää ukko1 osat paikalleen
 */
 
-	SetWindowLong( hWnd, GWL_STYLE, WS_MAXIMIZE|WS_VISIBLE|WS_POPUP );
-	ShowCursor(false);	
-	SetCursor(NULL);
-	m_pDevice->ShowCursor(FALSE);
-	cursor_shown=false;
-	D3DUtil_SetDeviceCursor(m_pDevice,mouse_cursor);
+	ApplyWindowStyle();
+	ApplyDeviceCursor();
 	mouse_button_0=false;
 	
 
@@ -1457,7 +1502,7 @@ bool createscreen(void){
 	format=d3ddm.Format;
 
     ZeroMemory( &m_d3dpp, sizeof(m_d3dpp) );
-    m_d3dpp.Windowed               = false;
+    m_d3dpp.Windowed               = windowed_mode;
 	m_d3dpp.BackBufferCount        = 1;
     m_d3dpp.MultiSampleType        = D3DMULTISAMPLE_NONE;
     m_d3dpp.SwapEffect             = D3DSWAPEFFECT_DISCARD;
@@ -2151,6 +2196,7 @@ bool Render(void)
 	m_pDevice->BeginScene();
 
 
+	if(!windowed_mode){
 	if((pelivaihe==7)&&(!cursor_shown)){
 		m_pDevice->ShowCursor(TRUE);
 		cursor_shown=true;
@@ -2158,6 +2204,7 @@ bool Render(void)
 	if((pelivaihe!=7)&&(cursor_shown)){
 		m_pDevice->ShowCursor(FALSE);
 		cursor_shown=false;
+	}
 	}
 
 	switch (pelivaihe) 
@@ -12303,12 +12350,8 @@ void restore_display(void){
 		elapsed3[q]=5;
 	}
 
-	SetWindowLong( hWnd, GWL_STYLE, WS_MAXIMIZE|WS_VISIBLE|WS_POPUP );
-	ShowCursor(false);	
-	SetCursor(NULL);
-	m_pDevice->ShowCursor(FALSE);
-	cursor_shown=false;
-	D3DUtil_SetDeviceCursor(m_pDevice,mouse_cursor);
+	ApplyWindowStyle();
+	ApplyDeviceCursor();
 	mouse_button_0=false;
 	
 
