@@ -54,7 +54,7 @@ public:
     ~CSoundManager();
 
     HRESULT Initialize( HWND hWnd, DWORD dwCoopLevel, DWORD dwPrimaryChannels, DWORD dwPrimaryFreq, DWORD dwPrimaryBitRate );
-    inline  LPDIRECTSOUND GetDirectSound() { return m_pDS; }
+    inline  LPDIRECTSOUND8 GetDirectSound() { return m_pDS; }
     HRESULT SetPrimaryBufferFormat( DWORD dwPrimaryChannels, DWORD dwPrimaryFreq, DWORD dwPrimaryBitRate );
     HRESULT Get3DListenerInterface( LPDIRECTSOUND3DLISTENER* ppDSListener );
 
