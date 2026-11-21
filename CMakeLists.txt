@@ -49,6 +49,7 @@ if(MSVC)
         strmiids.lib quartz.lib ole32.lib winmm.lib)
 else()
     target_compile_options(Wazzal PRIVATE -fpermissive -Wno-write-strings)
+    target_link_options(Wazzal PRIVATE -static -static-libgcc -static-libstdc++)
     target_link_libraries(Wazzal PRIVATE
         d3d8 dxguid dxerr8 dinput8 dsound strmiids quartz ole32 winmm uuid)
 endif()
