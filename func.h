@@ -11,7 +11,7 @@
 */
 #define D3D_OVERLOADS
 #include <d3d9.h>
-#include <d3dx9compat.h>
+#include <d3dx9.h>
 #include <dinput.h>
 #include <stdio.h>
 

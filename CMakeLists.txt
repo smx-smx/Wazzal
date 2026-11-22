@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(Wazzal LANGUAGES CXX)
 
 if(NOT WIN32)
-    message(FATAL_ERROR "Wazzal is a Windows DirectX 8 game and can only be built on Windows.")
+    message(FATAL_ERROR "Wazzal is a Windows DirectX 9 game and can only be built on Windows.")
 endif()
 
 enable_language(RC)
@@ -13,7 +13,6 @@ set(WAZZAL_SOURCES
     dsutil.cpp
     dxutil.cpp
     StdAfx.cpp
-    compat/d3dx9compat.cpp
     Stars.rc
 )
 
@@ -21,7 +20,6 @@ add_executable(Wazzal WIN32 ${WAZZAL_SOURCES})
 
 target_include_directories(Wazzal PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/compat
 )
 
 target_compile_definitions(Wazzal PRIVATE WIN32 _WINDOWS)
@@ -45,13 +43,13 @@ if(MSVC)
             "Either install it and set DXSDK_DIR, or build with MinGW-w64 i686.")
     endif()
     target_compile_options(Wazzal PRIVATE /EHsc /wd4996)
-    target_link_libraries(Wazzal PRIVATE d3d9.lib dxguid.lib dinput8.lib dsound.lib
+    target_link_libraries(Wazzal PRIVATE d3d9.lib d3dx9.lib dxguid.lib dinput8.lib dsound.lib
         strmiids.lib quartz.lib ole32.lib winmm.lib)
 else()
     target_compile_options(Wazzal PRIVATE -fpermissive -Wno-write-strings)
     target_link_options(Wazzal PRIVATE -static -static-libgcc -static-libstdc++)
     target_link_libraries(Wazzal PRIVATE
-        d3d9 dxguid dxerr8 dinput8 dsound strmiids quartz ole32 winmm uuid)
+        d3d9 d3dx9 dxguid dxerr8 dinput8 dsound strmiids quartz ole32 winmm uuid)
 endif()
 
 install(TARGETS Wazzal RUNTIME DESTINATION .)
