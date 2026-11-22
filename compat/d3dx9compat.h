@@ -1,13 +1,13 @@
-// Minimal D3DX 8 compatibility layer.
+// Minimal D3DX 9 compatibility layer.
 //
 // The original project was built against the DirectX 8.1 SDK, which is no
 // longer distributed. This header/source re-implements only the small subset
-// of D3DX8 that Wazzal actually uses, on top of the plain Direct3D 8 API.
+// of D3DX9 that Wazzal actually uses, on top of the plain Direct3D 9 API.
 
-#ifndef WAZZAL_COMPAT_D3DX8_H
-#define WAZZAL_COMPAT_D3DX8_H
+#ifndef WAZZAL_COMPAT_D3DX9_H
+#define WAZZAL_COMPAT_D3DX9_H
 
-#include <d3d8.h>
+#include <d3d9.h>
 #include <windows.h>
 #include <math.h>
 #include <string.h>
@@ -112,16 +112,16 @@ HRESULT WINAPI D3DXPlaneFromPointNormal(D3DXPLANE* pOut, const D3DXVECTOR3* pPoi
 
 HRESULT WINAPI D3DXCreateMatrixStack(DWORD flags, ID3DXMatrixStack** ppStack);
 
-HRESULT WINAPI D3DXCreateTexture(LPDIRECT3DDEVICE8 pDevice, UINT width, UINT height,
+HRESULT WINAPI D3DXCreateTexture(LPDIRECT3DDEVICE9 pDevice, UINT width, UINT height,
                                  UINT mipLevels, DWORD usage, D3DFORMAT format,
-                                 D3DPOOL pool, LPDIRECT3DTEXTURE8* ppTexture);
-HRESULT WINAPI D3DXCreateTextureFromFileExA(LPDIRECT3DDEVICE8 pDevice, LPCSTR pSrcFile,
+                                 D3DPOOL pool, LPDIRECT3DTEXTURE9* ppTexture);
+HRESULT WINAPI D3DXCreateTextureFromFileExA(LPDIRECT3DDEVICE9 pDevice, LPCSTR pSrcFile,
                                             UINT width, UINT height, UINT mipLevels,
                                             DWORD usage, D3DFORMAT format, D3DPOOL pool,
                                             DWORD filter, DWORD mipFilter, D3DCOLOR colorKey,
                                             D3DXIMAGE_INFO* pSrcInfo, PALETTEENTRY* pPalette,
-                                            LPDIRECT3DTEXTURE8* ppTexture);
-HRESULT WINAPI D3DXLoadSurfaceFromFileA(LPDIRECT3DSURFACE8 pDestSurface,
+                                            LPDIRECT3DTEXTURE9* ppTexture);
+HRESULT WINAPI D3DXLoadSurfaceFromFileA(LPDIRECT3DSURFACE9 pDestSurface,
                                         const PALETTEENTRY* pDestPalette,
                                         const RECT* pDestRect, LPCSTR pSrcFile,
                                         const RECT* pSrcRect, DWORD filter,
@@ -131,4 +131,4 @@ HRESULT WINAPI D3DXLoadSurfaceFromFileA(LPDIRECT3DSURFACE8 pDestSurface,
 }
 #endif
 
-#endif // WAZZAL_COMPAT_D3DX8_H
+#endif // WAZZAL_COMPAT_D3DX9_H

@@ -1,10 +1,10 @@
-// Minimal D3DX 8 compatibility layer (see d3dx8.h).
+// Minimal D3DX 9 compatibility layer (see d3dx9compat.h).
 //
 // Implements the matrix helpers, the matrix stack and the texture/surface
-// loading entry points used by Wazzal, using the Direct3D 8 API plus GDI for
+// loading entry points used by Wazzal, using the Direct3D 9 API plus GDI for
 // BMP decoding.
 
-#include "d3dx8.h"
+#include "d3dx9compat.h"
 
 #include <math.h>
 #include <string.h>
@@ -292,24 +292,24 @@ static UINT BytesPerPixel(D3DFORMAT format) {
     }
 }
 
-HRESULT WINAPI D3DXCreateTexture(LPDIRECT3DDEVICE8 pDevice, UINT width, UINT height,
+HRESULT WINAPI D3DXCreateTexture(LPDIRECT3DDEVICE9 pDevice, UINT width, UINT height,
                                  UINT mipLevels, DWORD usage, D3DFORMAT format,
-                                 D3DPOOL pool, LPDIRECT3DTEXTURE8* ppTexture) {
+                                 D3DPOOL pool, LPDIRECT3DTEXTURE9* ppTexture) {
     if (!pDevice || !ppTexture)
         return D3DERR_INVALIDCALL;
     if (mipLevels == D3DX_DEFAULT || mipLevels == D3DX_DEFAULT_NONPOW2)
         mipLevels = 1;
     if (format == D3DFMT_UNKNOWN)
         format = D3DFMT_A8R8G8B8;
-    return pDevice->CreateTexture(width, height, mipLevels, usage, format, pool, ppTexture);
+    return pDevice->CreateTexture(width, height, mipLevels, usage, format, pool, ppTexture, NULL);
 }
 
-HRESULT WINAPI D3DXCreateTextureFromFileExA(LPDIRECT3DDEVICE8 pDevice, LPCSTR pSrcFile,
+HRESULT WINAPI D3DXCreateTextureFromFileExA(LPDIRECT3DDEVICE9 pDevice, LPCSTR pSrcFile,
                                             UINT width, UINT height, UINT mipLevels,
                                             DWORD usage, D3DFORMAT format, D3DPOOL pool,
                                             DWORD filter, DWORD mipFilter, D3DCOLOR colorKey,
                                             D3DXIMAGE_INFO* pSrcInfo, PALETTEENTRY* pPalette,
-                                            LPDIRECT3DTEXTURE8* ppTexture) {
+                                            LPDIRECT3DTEXTURE9* ppTexture) {
     (void)width; (void)height; (void)filter; (void)mipFilter;
     (void)colorKey; (void)pPalette;
 
@@ -336,8 +336,8 @@ HRESULT WINAPI D3DXCreateTextureFromFileExA(LPDIRECT3DDEVICE8 pDevice, LPCSTR pS
     if (format == D3DFMT_UNKNOWN)
         format = D3DFMT_A8R8G8B8;
 
-    LPDIRECT3DTEXTURE8 texture = NULL;
-    HRESULT hr = pDevice->CreateTexture(w, h, mipLevels, usage, format, pool, &texture);
+    LPDIRECT3DTEXTURE9 texture = NULL;
+    HRESULT hr = pDevice->CreateTexture(w, h, mipLevels, usage, format, pool, &texture, NULL);
     if (FAILED(hr))
         return hr;
 
@@ -361,7 +361,25 @@ HRESULT WINAPI D3DXCreateTextureFromFileExA(LPDIRECT3DDEVICE8 pDevice, LPCSTR pS
     return S_OK;
 }
 
-HRESULT WINAPI D3DXLoadSurfaceFromFileA(LPDIRECT3DSURFACE8 pDestSurface,
+static void WriteScaledPixels(BYTE* base, INT pitch, D3DFORMAT format,
+                              LONG dstW, LONG dstH,
+                              LONG srcLeft, LONG srcTop, LONG srcW, LONG srcH,
+                              const std::vector<DWORD>& pixels, UINT sw, UINT sh)
+{
+    UINT bpp = BytesPerPixel(format);
+    for (LONG y = 0; y < dstH; ++y) {
+        LONG sy = srcTop + (LONG)((float)y * srcH / dstH);
+        if (sy >= (LONG)sh) sy = (LONG)sh - 1;
+        BYTE* row = base + y * pitch;
+        for (LONG x = 0; x < dstW; ++x) {
+            LONG sx = srcLeft + (LONG)((float)x * srcW / dstW);
+            if (sx >= (LONG)sw) sx = (LONG)sw - 1;
+            StorePixel(row + x * bpp, format, pixels[sy * sw + sx]);
+        }
+    }
+}
+
+HRESULT WINAPI D3DXLoadSurfaceFromFileA(LPDIRECT3DSURFACE9 pDestSurface,
                                         const PALETTEENTRY* pDestPalette,
                                         const RECT* pDestRect, LPCSTR pSrcFile,
                                         const RECT* pSrcRect, DWORD filter,
@@ -405,24 +423,38 @@ HRESULT WINAPI D3DXLoadSurfaceFromFileA(LPDIRECT3DSURFACE8 pDestSurface,
     if (dstW <= 0 || dstH <= 0 || srcW <= 0 || srcH <= 0)
         return D3DERR_INVALIDCALL;
 
+    // D3DPOOL_DEFAULT surfaces cannot always be locked; try directly first.
     D3DLOCKED_RECT locked;
     hr = pDestSurface->LockRect(&locked, &dst, 0);
-    if (FAILED(hr))
-        return hr;
-
-    UINT bpp = BytesPerPixel(desc.Format);
-    BYTE* base = (BYTE*)locked.pBits;
-    for (LONG y = 0; y < dstH; ++y) {
-        LONG sy = src.top + (LONG)((float)y * srcH / dstH);
-        if (sy >= (LONG)sh) sy = (LONG)sh - 1;
-        BYTE* row = base + y * locked.Pitch;
-        for (LONG x = 0; x < dstW; ++x) {
-            LONG sx = src.left + (LONG)((float)x * srcW / dstW);
-            if (sx >= (LONG)sw) sx = (LONG)sw - 1;
-            StorePixel(row + x * bpp, desc.Format, pixels[sy * sw + sx]);
-        }
+    if (SUCCEEDED(hr)) {
+        WriteScaledPixels((BYTE*)locked.pBits, locked.Pitch, desc.Format, dstW, dstH,
+                          src.left, src.top, srcW, srcH, pixels, sw, sh);
+        pDestSurface->UnlockRect();
+        return S_OK;
     }
 
-    pDestSurface->UnlockRect();
-    return S_OK;
+    // Otherwise fill a system-memory staging surface and copy it over.
+    LPDIRECT3DDEVICE9 device = NULL;
+    hr = pDestSurface->GetDevice(&device);
+    if (FAILED(hr) || !device)
+        return hr;
+
+    LPDIRECT3DSURFACE9 staging = NULL;
+    hr = device->CreateOffscreenPlainSurface(desc.Width, desc.Height, desc.Format,
+                                             D3DPOOL_SYSTEMMEM, &staging, NULL);
+    if (SUCCEEDED(hr)) {
+        D3DLOCKED_RECT slocked;
+        hr = staging->LockRect(&slocked, &dst, 0);
+        if (SUCCEEDED(hr)) {
+            WriteScaledPixels((BYTE*)slocked.pBits, slocked.Pitch, desc.Format, dstW, dstH,
+                              src.left, src.top, srcW, srcH, pixels, sw, sh);
+            staging->UnlockRect();
+            RECT srcRect = dst;
+            POINT destPoint = { dst.left, dst.top };
+            hr = device->UpdateSurface(staging, &srcRect, pDestSurface, &destPoint);
+        }
+        staging->Release();
+    }
+    device->Release();
+    return hr;
 }
