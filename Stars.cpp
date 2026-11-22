@@ -72,10 +72,11 @@ static void ApplyDeviceCursor(void)
 {
 	cursor_shown = false;
 	if (windowed_mode) {
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		while (ShowCursor(TRUE) < 0) { }
+		SetCursor((HCURSOR)mouse_cursor);
 	} else {
-		m_pDevice->ShowCursor(FALSE);
-		D3DUtil_SetDeviceCursor(m_pDevice, mouse_cursor);
+		ShowCursor(FALSE);
+		SetCursor(NULL);
 	}
 }
 
@@ -450,24 +451,24 @@ void init(void)
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
 	//ensin linear filter
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MAGFILTER, D3DTEXF_LINEAR);	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MINFILTER, D3DTEXF_LINEAR);			
+		m_pDevice->SetSamplerState(0,D3DSAMP_MINFILTER, D3DTEXF_LINEAR);			
 	//sitten anistropic filter
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFANISOTROPIC)		
-		m_pDevice->SetTextureStageState(0,D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC);	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);	
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MINFANISOTROPIC)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC);		
+		m_pDevice->SetSamplerState(0,D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);		
 	//point size
 	point_size=1;
 	if(deviceCaps.MaxPointSize>1)		
 		point_size=4;
 	
 
-	m_pDevice->SetTextureStageState(0,D3DTSS_MAXANISOTROPY,2);
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSU,D3DTADDRESS_MIRROR ); 
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSV,D3DTADDRESS_MIRROR ); 
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSW,D3DTADDRESS_MIRROR );	
+	m_pDevice->SetSamplerState(0,D3DSAMP_MAXANISOTROPY,2);
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSU,D3DTADDRESS_MIRROR ); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSV,D3DTADDRESS_MIRROR ); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSW,D3DTADDRESS_MIRROR );	
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);	
 	m_pDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, 
                                    D3DTTFF_COUNT2 //| D3DTTFF_PROJECTED 
@@ -539,18 +540,18 @@ void init(void)
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
 	//ensin linear filter
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MAGFILTER, D3DTEXF_LINEAR);	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MINFILTER, D3DTEXF_LINEAR);			
+		m_pDevice->SetSamplerState(0,D3DSAMP_MINFILTER, D3DTEXF_LINEAR);			
 	//sitten anistropic filter
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFANISOTROPIC)		
-		m_pDevice->SetTextureStageState(0,D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC);	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);	
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MINFANISOTROPIC)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC);		
-	m_pDevice->SetTextureStageState(0,D3DTSS_MAXANISOTROPY,2);
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSU,D3DTADDRESS_MIRROR ); 
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSV,D3DTADDRESS_MIRROR ); 
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSW,D3DTADDRESS_MIRROR );	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);		
+	m_pDevice->SetSamplerState(0,D3DSAMP_MAXANISOTROPY,2);
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSU,D3DTADDRESS_MIRROR ); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSV,D3DTADDRESS_MIRROR ); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSW,D3DTADDRESS_MIRROR );	
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);	
 	m_pDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, 
                                    D3DTTFF_COUNT2 //| D3DTTFF_PROJECTED 
@@ -1205,7 +1206,7 @@ BOOL lataa(char nimi[200],obj *kohde,BOOL mirror,BOOL miekkakala)
 				//D3DVERTEX kolmijako[faces*3];
 				//FLOAT new( x[kolme]);
 				//x=new(FLOAT[kolme]);
-				//kohde[b].sisus[q].loota.kolmijako = new LPDIRECT3DVERTEXBUFFER8[kohde[b].count];
+				//kohde[b].sisus[q].loota.kolmijako = new LPDIRECT3DVERTEXBUFFER9[kohde[b].count];
 				kohde[b].sisus[q].loota.vert = faces*3;
 
 				kohde[b].upleft.x=NULL;
@@ -1346,7 +1347,7 @@ BOOL lataa(char nimi[200],obj *kohde,BOOL mirror,BOOL miekkakala)
 
 				m_pDevice->CreateVertexBuffer( kohde[b].sisus[q].loota.vert*sizeof(vvertex),
                                                   D3DUSAGE_WRITEONLY  , D3DFVF_WVERTEX,
-                                                  D3DPOOL_DEFAULT, &kohde[b].sisus[q].loota.kolmijako );
+                                                  D3DPOOL_DEFAULT, &kohde[b].sisus[q].loota.kolmijako, NULL );
 				VOID* pVertices;
 				kohde[b].sisus[q].loota.kolmijako->Lock( 0, 0, (BYTE**)&pVertices, 0 );					
 				memcpy( pVertices, vertex, kohde[b].sisus[q].loota.vert*sizeof(vvertex) );
@@ -1379,8 +1380,8 @@ BOOL lataatext()
 
 	fgets(rivi,sizeof(rivi),fil);
 	materiaa=atoi(rivi);	
-	mat = new D3DMATERIAL8[materiaa];
-	tausta = new LPDIRECT3DTEXTURE8[materiaa];
+	mat = new D3DMATERIAL9[materiaa];
+	tausta = new LPDIRECT3DTEXTURE9[materiaa];
 	bool filter[300];//josko suodatetaan vai ei
 
 	for (q=0; q<materiaa; q++)
@@ -1491,7 +1492,7 @@ BOOL lataatext()
 	
 bool createscreen(void){
 		
-	m_pD3D = Direct3DCreate8( D3D_SDK_VERSION );
+	m_pD3D = Direct3DCreate9( D3D_SDK_VERSION );
 
 	m_bUseDepthBuffer   = TRUE;
     m_dwMinDepthBits    = 16;
@@ -2166,7 +2167,7 @@ void valota(float x,float y,float z)
 		
 	//if(valoja>=maksimivaloja)poistavalo(randInt(0,valoja),&valoja);
 
-		ZeroMemory(&lamppu[q].valo, sizeof(D3DLIGHT8));
+		ZeroMemory(&lamppu[q].valo, sizeof(D3DLIGHT9));
  
 			lamppu[q].on=true;				
 			lamppu[q].valo.Type = D3DLIGHT_POINT;	
@@ -2200,11 +2201,12 @@ bool Render(void)
 
 	if(!windowed_mode){
 	if((pelivaihe==7)&&(!cursor_shown)){
-		m_pDevice->ShowCursor(TRUE);
+		ShowCursor(TRUE);
+		SetCursor((HCURSOR)mouse_cursor);
 		cursor_shown=true;
 	}
 	if((pelivaihe!=7)&&(cursor_shown)){
-		m_pDevice->ShowCursor(FALSE);
+		ShowCursor(FALSE);
 		cursor_shown=false;
 	}
 	}
@@ -2416,7 +2418,7 @@ bool Render(void)
 bool luekuvat(void)
 {
 	int q;
-	kuvia	=	new LPDIRECT3DSURFACE8[numkuvia];	
+	kuvia	=	new LPDIRECT3DSURFACE9[numkuvia];	
 	//HBITMAP hbm = 0;
 	//BITMAP bminfo;
 
@@ -2434,12 +2436,13 @@ bool luekuvat(void)
 		//hbm = (HBITMAP)LoadImage(NULL, rivi, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 		//GetObject(hbm, sizeof(bminfo), &bminfo);
 
-		HRESULT res=m_pDevice->CreateImageSurface(
+		HRESULT res=m_pDevice->CreateOffscreenPlainSurface(
 		  SCREEN_WIDTH,
 		  SCREEN_HEIGHT,
 		  format,
-		  //D3DFMT_A8R8G8B8,
-		  &kuvia[q]
+		  D3DPOOL_DEFAULT,
+		  &kuvia[q],
+		  NULL
 		);
 
 		//kuvia[q]=lataakuva(m_pDD, rivi,false);	
@@ -2666,8 +2669,8 @@ m_pDevice->SetRenderState(D3DRS_DESTBLEND,
 */
 	if((r!=-1)&&(g!=-1)&&(b!=-1))
 	{
-			D3DMATERIAL8 mate;
-			ZeroMemory( &mate, sizeof(D3DMATERIAL8));
+			D3DMATERIAL9 mate;
+			ZeroMemory( &mate, sizeof(D3DMATERIAL9));
 			// Set the RGBA for diffuse reflection. 
 			mate.Diffuse.r =0; 
 			mate.Diffuse.g =0; 
@@ -2702,8 +2705,8 @@ m_pDevice->SetRenderState(D3DRS_DESTBLEND,
 		m_pDevice->SetTexture( 0, tausta[tavara->sisus[q].textuuri2] );  	
 		
 		
-		m_pDevice->SetStreamSource( 0, tavara->sisus[q].loota.kolmijako, sizeof(vvertex) );
-		m_pDevice->SetVertexShader( D3DFVF_WVERTEX );
+		m_pDevice->SetStreamSource( 0, tavara->sisus[q].loota.kolmijako, 0, sizeof(vvertex) );
+		m_pDevice->SetFVF( D3DFVF_WVERTEX );
 		m_pDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, tavara->sisus[q].loota.vert/3 );
 
 		//matriisi->Pop();
@@ -2732,8 +2735,8 @@ BOOL drawfast(obj *tavara)
 		m_pDevice->SetTexture( 0, tausta[tavara->sisus[q].textuuri2] );  	
 		
 		
-		m_pDevice->SetStreamSource( 0, tavara->sisus[q].loota.kolmijako, sizeof(vvertex) );
-		m_pDevice->SetVertexShader( D3DFVF_WVERTEX );
+		m_pDevice->SetStreamSource( 0, tavara->sisus[q].loota.kolmijako, 0, sizeof(vvertex) );
+		m_pDevice->SetFVF( D3DFVF_WVERTEX );
 		m_pDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, tavara->sisus[q].loota.vert/3 );
 		
 	}
@@ -2784,12 +2787,12 @@ void kirjota(float size,float r,float g, float b, float x, float y, INT rivi,CHA
 			m_pDevice->SetRenderState( D3DRS_AMBIENT, D3DCOLOR_RGBA((int)(r*255), (int)(g*255), (int)(b*255),255));
 
 			m_pDevice->SetTransform(D3DTS_WORLD, matriisi->GetTop());		 
-			m_pDevice->SetRenderState( D3DRS_ZBIAS, 0);
+			m_pDevice->SetRenderState( D3DRS_DEPTHBIAS, FtoDW(0.0f));
 			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,TRUE);
 			m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE); 		
 			D3DXMatrixPerspectiveFovLH( &matProj,  (float)((80)*pi/180), aspect, 25.0f, maxvisible);		
 			m_pDevice->SetTransform( D3DTS_PROJECTION, &matProj );
-			m_pDevice->SetVertexShader( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );
+			m_pDevice->SetFVF( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );
 
 
 	for (int i=0; i<abs((int)strlen(teksti)); i++)
@@ -3197,7 +3200,7 @@ void render_game(void){
 				m_pDevice->SetTransform(D3DTS_WORLD, matriisi->GetTop());			
 				m_pDevice->SetMaterial( &mat[0] );
 				m_pDevice->SetTexture( 0, tausta[0]);
-				m_pDevice->SetVertexShader( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );
+				m_pDevice->SetFVF( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );
 				
 				m_pDevice->SetRenderState( D3DRS_POINTSPRITEENABLE, FALSE );
 				m_pDevice->SetRenderState( D3DRS_POINTSCALEENABLE,  FALSE );
@@ -3356,7 +3359,7 @@ void render_game(void){
 		m_pDevice->SetRenderState(D3DRS_AMBIENT, 0xFFFFFFFF);
 		m_pDevice->LightEnable(0, FALSE);
 		m_pDevice->LightEnable(1, FALSE);
-		m_pDevice->SetVertexShader( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );		
+		m_pDevice->SetFVF( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );		
 		m_pDevice->SetRenderState( D3DRS_POINTSIZE_MIN, FtoDW(point_size) );
 		m_pDevice->SetRenderState( D3DRS_POINTSCALE_A,  FtoDW(0.00f) );
 		m_pDevice->SetRenderState( D3DRS_POINTSCALE_B,  FtoDW(0.00f) );
@@ -4429,7 +4432,7 @@ void renderbattle(void){
 	q=0;
 	//maailman valo
 	
-	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));
+	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));
 	
 	lamppu[0].valo.Position.y = 0;
 	lamppu[0].valo.Position.x = ship[0].x1;
@@ -4519,7 +4522,7 @@ void renderbattle(void){
 	m_pDevice->SetMaterial( &mat[7] );
 	m_pDevice->SetTexture( 0, tausta[7]);
 	m_pDevice->SetRenderState(D3DRS_ZENABLE ,FALSE);
-	m_pDevice->SetVertexShader( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );	
+	m_pDevice->SetFVF( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );	
 	m_pDevice->DrawPrimitiveUP(D3DPT_LINELIST   ,4,vert,sizeof(pvertex));	
 
 
@@ -4647,7 +4650,7 @@ void renderbattle(void){
 	m_pDevice->LightEnable(0, TRUE);
 	m_pDevice->LightEnable(1, TRUE);
 	//light
-	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));	
+	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));	
 	lamppu[0].valo.Range = 10000;
 	lamppu[0].valo.Diffuse.r = 1;    
 	lamppu[0].valo.Diffuse.g = 1;
@@ -4927,7 +4930,7 @@ void rendersolarsystem(void){//draws solar system
 			m_pDevice->SetRenderState(D3DRS_ZENABLE,FALSE);
 			m_pDevice->SetMaterial( &mat[0] );
 			m_pDevice->SetTexture( 0, tausta[0]);
-			m_pDevice->SetVertexShader( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );
+			m_pDevice->SetFVF( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );
 			
 			m_pDevice->SetRenderState( D3DRS_POINTSPRITEENABLE, FALSE );
 			m_pDevice->SetRenderState( D3DRS_POINTSCALEENABLE,  FALSE );
@@ -5101,7 +5104,7 @@ void rendersolarsystem(void){//draws solar system
 	m_pDevice->LightEnable(0, TRUE);
 	m_pDevice->LightEnable(1, TRUE);
 	//light
-	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));	
+	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));	
 	lamppu[0].valo.Range = 10000;
 	lamppu[0].valo.Diffuse.r = 1;    
 	lamppu[0].valo.Diffuse.g = 1;
@@ -5371,11 +5374,11 @@ void render_dialog(void){
 	m_pDevice->LightEnable(1, FALSE);
 
 	//background
-	LPDIRECT3DSURFACE8 pBackBuffer;
-    m_pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
+	LPDIRECT3DSURFACE9 pBackBuffer;
+    m_pDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
 	RECT rcSource[] = {  0,  0,  SCREEN_WIDTH,  SCREEN_HEIGHT};
-	POINT ptDest[]   = {  0,  0};
-    m_pDevice->CopyRects(kuvia[0], rcSource, 1, pBackBuffer, ptDest);
+	RECT rcBgDest = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_pDevice->StretchRect(kuvia[0], rcSource, pBackBuffer, &rcBgDest, D3DTEXF_NONE);
     pBackBuffer->Release();
 
 	//small picture of earth
@@ -7803,7 +7806,7 @@ BOOL FindDepthStencilFormat( UINT iAdapter, D3DDEVTYPE DeviceType,
 // Desc: Called during device intialization, this code checks the device
 //       for some minimum set of capabilities
 //-----------------------------------------------------------------------------
-HRESULT ConfirmDevice( D3DCAPS8* pCaps, DWORD dwBehavior,
+HRESULT ConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior,
                                           D3DFORMAT Format )
 {
     if( dwBehavior & D3DCREATE_PUREDEVICE )
@@ -8815,11 +8818,11 @@ void render_ships(void){
 	m_pDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 
 	//background
-	LPDIRECT3DSURFACE8 pBackBuffer;
-    m_pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
+	LPDIRECT3DSURFACE9 pBackBuffer;
+    m_pDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
 	RECT rcSource[] = {  0,  0,  SCREEN_WIDTH,  SCREEN_HEIGHT};
-	POINT ptDest[]   = {  0,  0};
-    m_pDevice->CopyRects(kuvia[1], rcSource, 1, pBackBuffer, ptDest);
+	RECT rcBgDest = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_pDevice->StretchRect(kuvia[1], rcSource, pBackBuffer, &rcBgDest, D3DTEXF_NONE);
     pBackBuffer->Release();
 
 	//ships 
@@ -8829,7 +8832,7 @@ void render_ships(void){
 	m_pDevice->LightEnable(0, TRUE);
 	m_pDevice->LightEnable(1, TRUE);
 	//light
-	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));	
+	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));	
 	lamppu[0].valo.Range = 10000;
 	lamppu[0].valo.Diffuse.r = 1;
 	lamppu[0].valo.Diffuse.g = 1;
@@ -9087,15 +9090,15 @@ void render_capture(void){//renders the capture scene
 	if(!help_screen)pelinopeus=0.6f;
 
 	//background
-	LPDIRECT3DSURFACE8 pBackBuffer;
-    m_pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
+	LPDIRECT3DSURFACE9 pBackBuffer;
+    m_pDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
 	RECT rcSource[] = {  0,  0,  SCREEN_WIDTH,  SCREEN_HEIGHT};
-	POINT ptDest[]   = {  0,  0};
-    m_pDevice->CopyRects(kuvia[2], rcSource, 1, pBackBuffer, ptDest);
+	RECT rcBgDest = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_pDevice->StretchRect(kuvia[2], rcSource, pBackBuffer, &rcBgDest, D3DTEXF_NONE);
     pBackBuffer->Release();
 		
 	//light
-	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));	
+	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));	
 	lamppu[0].valo.Position.y = 0;
 	lamppu[0].valo.Position.x = 0;
 	lamppu[0].valo.Position.z = 0;
@@ -9617,7 +9620,7 @@ void render_cutscene(void){//renders a cutscene
 	m_pDevice->Clear( 0, NULL, D3DCLEAR_TARGET, 0x00000000, 0, 0 );
 	
 	//light
-	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));	
+	ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));	
 	lamppu[0].valo.Position.y = 0;
 	lamppu[0].valo.Position.x = 0;
 	lamppu[0].valo.Position.z = 0;
@@ -9783,11 +9786,11 @@ void render_map(void){//draws solar system map
 	}
 
 	//background
-	LPDIRECT3DSURFACE8 pBackBuffer;
-    m_pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
+	LPDIRECT3DSURFACE9 pBackBuffer;
+    m_pDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
 	RECT rcSource[] = {  0,  0,  SCREEN_WIDTH,  SCREEN_HEIGHT};
-	POINT ptDest[]   = {  0,  0};
-    m_pDevice->CopyRects(kuvia[3], rcSource, 1, pBackBuffer, ptDest);
+	RECT rcBgDest = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_pDevice->StretchRect(kuvia[3], rcSource, pBackBuffer, &rcBgDest, D3DTEXF_NONE);
     pBackBuffer->Release();
 
 
@@ -10016,11 +10019,11 @@ void render_missions(void){//draws diagram of missions
 	}
 
 	//background
-	LPDIRECT3DSURFACE8 pBackBuffer;
-    m_pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
+	LPDIRECT3DSURFACE9 pBackBuffer;
+    m_pDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
 	RECT rcSource[] = {  0,  0,  SCREEN_WIDTH,  SCREEN_HEIGHT};
-	POINT ptDest[]   = {  0,  0};
-    m_pDevice->CopyRects(kuvia[4], rcSource, 1, pBackBuffer, ptDest);
+	RECT rcBgDest = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_pDevice->StretchRect(kuvia[4], rcSource, pBackBuffer, &rcBgDest, D3DTEXF_NONE);
     pBackBuffer->Release();
 
 
@@ -10100,10 +10103,10 @@ int randomplanet(int number){
 	return planetn;
 }
 
-HRESULT Screenshot(LPDIRECT3DDEVICE8 lpDevice, const char* lpszFileName,char line[200]){
+HRESULT Screenshot(LPDIRECT3DDEVICE9 lpDevice, const char* lpszFileName,char line[200]){
 
-    LPDIRECT3DSURFACE8 lpSurface = NULL;    // copy of the front buffer
-    LPDIRECT3D8 lpD3D = NULL;   // IDirect3D8 interface that created lpDevice
+    LPDIRECT3DSURFACE9 lpSurface = NULL;    // copy of the front buffer
+    LPDIRECT3D9 lpD3D = NULL;   // IDirect3D9 interface that created lpDevice
     LPBYTE Bits = NULL;         // bitmap bits of the DIB
     FILE* f = NULL;             // BMP file handle
 
@@ -10113,7 +10116,7 @@ HRESULT Screenshot(LPDIRECT3DDEVICE8 lpDevice, const char* lpszFileName,char lin
     if (!lpDevice)
     {
      //   throw invalid_argument("Function \"Screenshot\": "
-     //       "LPDIRECT3DDEVICE8 lpDevice is NULL.");
+     //       "LPDIRECT3DDEVICE9 lpDevice is NULL.");
     }
 
 //try
@@ -10137,7 +10140,7 @@ HRESULT Screenshot(LPDIRECT3DDEVICE8 lpDevice, const char* lpszFileName,char lin
     D3DDISPLAYMODE dm;
     dm.Width = dm.Height = 0;
 
-    // retrieve pointer to IDirect3D8 interface,
+    // retrieve pointer to IDirect3D9 interface,
     // which provides the GetAdapterDisplayMode method
     lpDevice->GetDirect3D(&lpD3D);
     if (lpD3D)
@@ -10149,22 +10152,24 @@ HRESULT Screenshot(LPDIRECT3DDEVICE8 lpDevice, const char* lpszFileName,char lin
 
     // create a 32-bit ARGB system-memory surface that is going to receive
     // a copy of the front buffer's contents
-    if (FAILED(lpDevice->CreateImageSurface(
+    if (FAILED(lpDevice->CreateOffscreenPlainSurface(
         dm.Width, dm.Height,
         D3DFMT_A8R8G8B8,
-        &lpSurface
+        D3DPOOL_SYSTEMMEM,
+        &lpSurface,
+        NULL
     )))
     {
        // throw runtime_error("Function \"Screenshot\": "
-       //     "IDirect3DDevice8::CreateImageSurface failed.");
+       //     "IDirect3DDevice9::CreateImageSurface failed.");
     }
 
     // have the GetFrontBuffer method copy the contents of the front
     // buffer to our system-memory surface
-    if (FAILED(lpDevice->GetFrontBuffer(lpSurface)))
+    if (FAILED(lpDevice->GetFrontBufferData(0, lpSurface)))
     {
        // throw runtime_error("Function \"Screenshot\": "
-       //    "IDirect3DDevice8::GetFrontBuffer failed.");
+       //    "IDirect3DDevice9::GetFrontBuffer failed.");
     }
 
     // prepare the bitmap info header
@@ -10198,7 +10203,7 @@ HRESULT Screenshot(LPDIRECT3DDEVICE8 lpDevice, const char* lpszFileName,char lin
     if (FAILED(lpSurface->LockRect(&LockedRect, NULL, D3DLOCK_READONLY)))
     {
        // throw runtime_error("Function \"Screenshot\": "
-       //     "IDirect3DSurface8::LockRect failed.");
+       //     "IDirect3DSurface9::LockRect failed.");
     }
 
     // flip the bitmap vertically (because that's how DIBs are stored)
@@ -10544,11 +10549,11 @@ void render_menu(void){//renders game menus
 
 	//m_pDevice->Clear( 0, NULL, D3DCLEAR_TARGET, 0x00000000, 0, 0 );
 	//background
-	LPDIRECT3DSURFACE8 pBackBuffer;
-    m_pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
+	LPDIRECT3DSURFACE9 pBackBuffer;
+    m_pDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer );
 	RECT rcSource[] = {  0,  0,  SCREEN_WIDTH,  SCREEN_HEIGHT};
-	POINT ptDest[]   = {  0,  0};
-    m_pDevice->CopyRects(kuvia[5], rcSource, 1, pBackBuffer, ptDest);
+	RECT rcBgDest = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    m_pDevice->StretchRect(kuvia[5], rcSource, pBackBuffer, &rcBgDest, D3DTEXF_NONE);
     pBackBuffer->Release();
 
 	//kirjota(2,-1,-1,-1,88,124,50,"Stars");
@@ -10796,7 +10801,7 @@ void render_menu(void){//renders game menus
 						D3DXMatrixShadow(&tempmatrix,&D3DXVECTOR4(100,4200,0,0),&plane);
 						*/
 						//light
-						ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT8));							
+						ZeroMemory(&lamppu[0].valo, sizeof(D3DLIGHT9));							
 						lamppu[0].valo.Range = 50000;
 						lamppu[0].valo.Diffuse.r = 1;    
 						lamppu[0].valo.Diffuse.g = 1;
@@ -11098,7 +11103,7 @@ void render_menu(void){//renders game menus
 		m_pDevice->SetRenderState(D3DRS_AMBIENT, 0xFFFFFFFF);
 		m_pDevice->LightEnable(0, FALSE);
 		m_pDevice->LightEnable(1, FALSE);
-		m_pDevice->SetVertexShader( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );		
+		m_pDevice->SetFVF( D3DFVF_XYZ |D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0) );		
 		m_pDevice->SetRenderState( D3DRS_POINTSIZE_MIN, FtoDW(point_size) );
 		m_pDevice->SetRenderState( D3DRS_POINTSCALE_A,  FtoDW(0.00f) );
 		m_pDevice->SetRenderState( D3DRS_POINTSCALE_B,  FtoDW(0.00f) );
@@ -12294,22 +12299,22 @@ void restore_display(void){
 	m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE,TRUE);
 	//ensin linear filter
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MAGFILTER, D3DTEXF_LINEAR);	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MINFILTER, D3DTEXF_LINEAR);			
+		m_pDevice->SetSamplerState(0,D3DSAMP_MINFILTER, D3DTEXF_LINEAR);			
 	//sitten anistropic filter
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFANISOTROPIC)		
-		m_pDevice->SetTextureStageState(0,D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC);	
+		m_pDevice->SetSamplerState(0,D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);	
 	if(deviceCaps.TextureFilterCaps&D3DPTFILTERCAPS_MINFANISOTROPIC)
-		m_pDevice->SetTextureStageState(0,D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC);		
+		m_pDevice->SetSamplerState(0,D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);		
 	//point size
 	point_size=1;
 	if(deviceCaps.MaxPointSize>1)		
 		point_size=4;
-	m_pDevice->SetTextureStageState(0,D3DTSS_MAXANISOTROPY,2);
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSU,D3DTADDRESS_MIRROR ); 
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSV,D3DTADDRESS_MIRROR ); 
-	m_pDevice->SetTextureStageState(0,D3DTSS_ADDRESSW,D3DTADDRESS_MIRROR );	
+	m_pDevice->SetSamplerState(0,D3DSAMP_MAXANISOTROPY,2);
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSU,D3DTADDRESS_MIRROR ); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSV,D3DTADDRESS_MIRROR ); 
+	m_pDevice->SetSamplerState(0,D3DSAMP_ADDRESSW,D3DTADDRESS_MIRROR );	
 	m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);	
 	m_pDevice->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, 
                                    D3DTTFF_COUNT2 //| D3DTTFF_PROJECTED 
@@ -12358,146 +12363,4 @@ void restore_display(void){
 	
 
 
-}
-
-//-----------------------------------------------------------------------------
-// Name: D3DUtil_SetDeviceCursor
-// Desc: Gives the D3D device a cursor with image and hotspot from hCursor.
-//-----------------------------------------------------------------------------
-HRESULT D3DUtil_SetDeviceCursor( LPDIRECT3DDEVICE8 pd3dDevice, HCURSOR hCursor )
-{
-    HRESULT hr = E_FAIL;
-    ICONINFO iconinfo;
-    BOOL bBWCursor;
-    LPDIRECT3DSURFACE8 pCursorBitmap = NULL;
-    HDC hdcColor = NULL;
-    HDC hdcMask = NULL;
-    HDC hdcScreen = NULL;
-    BITMAP bm;
-    DWORD dwWidth;
-    DWORD dwHeightSrc;
-    DWORD dwHeightDest;
-    COLORREF crColor;
-    COLORREF crMask;
-    UINT x;
-    UINT y;
-    BITMAPINFO bmi;
-    COLORREF* pcrArrayColor = NULL;
-    COLORREF* pcrArrayMask = NULL;
-    DWORD* pBitmap;
-    HGDIOBJ hgdiobjOld;
-
-    ZeroMemory( &iconinfo, sizeof(iconinfo) );
-    if( !GetIconInfo( hCursor, &iconinfo ) )
-        goto End;
-
-    if (0 == GetObject((HGDIOBJ)iconinfo.hbmMask, sizeof(BITMAP), (LPVOID)&bm))
-        goto End;
-    dwWidth = bm.bmWidth;
-    dwHeightSrc = bm.bmHeight;
-
-    if( iconinfo.hbmColor == NULL )
-    {
-        bBWCursor = TRUE;
-        dwHeightDest = dwHeightSrc / 2;
-    }
-    else 
-    {
-        bBWCursor = FALSE;
-        dwHeightDest = dwHeightSrc;
-    }
-
-    // Create a surface for the fullscreen cursor
-    if( FAILED( hr = pd3dDevice->CreateImageSurface( dwWidth, dwHeightDest, 
-        D3DFMT_A8R8G8B8, &pCursorBitmap ) ) )
-    {
-        goto End;
-    }
-
-    pcrArrayMask = new DWORD[dwWidth * dwHeightSrc];
-
-    ZeroMemory(&bmi, sizeof(bmi));
-    bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
-    bmi.bmiHeader.biWidth = dwWidth;
-    bmi.bmiHeader.biHeight = dwHeightSrc;
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
-    bmi.bmiHeader.biCompression = BI_RGB;
-
-    hdcScreen = GetDC( NULL );
-    hdcMask = CreateCompatibleDC( hdcScreen );
-    if( hdcMask == NULL )
-    {
-        hr = E_FAIL;
-        goto End;
-    }
-    hgdiobjOld = SelectObject(hdcMask, iconinfo.hbmMask);
-    GetDIBits(hdcMask, iconinfo.hbmMask, 0, dwHeightSrc, 
-        pcrArrayMask, &bmi, DIB_RGB_COLORS);
-    SelectObject(hdcMask, hgdiobjOld);
-
-    if (!bBWCursor)
-    {
-        pcrArrayColor = new DWORD[dwWidth * dwHeightDest];
-        hdcColor = CreateCompatibleDC( GetDC( NULL ) );
-        if( hdcColor == NULL )
-        {
-            hr = E_FAIL;
-            goto End;
-        }
-        SelectObject(hdcColor, iconinfo.hbmColor);
-        GetDIBits(hdcColor, iconinfo.hbmColor, 0, dwHeightDest, 
-            pcrArrayColor, &bmi, DIB_RGB_COLORS);
-    }
-
-    // Transfer cursor image into the surface
-    D3DLOCKED_RECT lr;
-    pCursorBitmap->LockRect( &lr, NULL, 0 );
-    pBitmap = (DWORD*)lr.pBits;
-    for( y = 0; y < dwHeightDest; y++ )
-    {
-        for( x = 0; x < dwWidth; x++ )
-        {
-            if (bBWCursor)
-            {
-                crColor = pcrArrayMask[dwWidth*(dwHeightDest-1-y) + x];
-                crMask = pcrArrayMask[dwWidth*(dwHeightSrc-1-y) + x];
-            }
-            else
-            {
-                crColor = pcrArrayColor[dwWidth*(dwHeightDest-1-y) + x];
-                crMask = pcrArrayMask[dwWidth*(dwHeightDest-1-y) + x];
-            }
-            if (crMask == 0)
-                pBitmap[dwWidth*y + x] = 0xff000000 | crColor;
-            else
-                pBitmap[dwWidth*y + x] = 0x00000000;
-        }
-    }
-    pCursorBitmap->UnlockRect();
-
-    // Set the device cursor
-    if( FAILED( hr = pd3dDevice->SetCursorProperties( 0, 
-        0, pCursorBitmap ) ) )
-    {
-        goto End;
-    }
-
-    hr = S_OK;
-
-End:
-    if( iconinfo.hbmMask != NULL )
-        DeleteObject( iconinfo.hbmMask );
-    if( iconinfo.hbmColor != NULL )
-        DeleteObject( iconinfo.hbmColor );
-    if( hdcScreen != NULL )
-        ReleaseDC( NULL, hdcScreen );
-    if( hdcColor != NULL )
-        DeleteDC( hdcColor );
-    if( hdcMask != NULL )
-        DeleteDC( hdcMask );
-    SAFE_DELETE_ARRAY( pcrArrayColor );
-    SAFE_DELETE_ARRAY( pcrArrayMask );
-    SAFE_RELEASE( pCursorBitmap );
-    return hr;
 }

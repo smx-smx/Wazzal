@@ -13,7 +13,7 @@ set(WAZZAL_SOURCES
     dsutil.cpp
     dxutil.cpp
     StdAfx.cpp
-    compat/d3dx8.cpp
+    compat/d3dx9compat.cpp
     Stars.rc
 )
 
@@ -34,24 +34,24 @@ set_target_properties(Wazzal PROPERTIES
 )
 
 if(MSVC)
-    # The Microsoft toolchain needs the DirectX 8.1 SDK for d3d8.h/d3dx8.
+    # The Microsoft toolchain needs a DirectX SDK for the legacy dxerr8 header.
     # Point DXSDK_DIR at a DirectX 8.1 SDK installation to use MSVC.
-    if(DEFINED ENV{DXSDK_DIR} AND EXISTS "$ENV{DXSDK_DIR}/Include/d3d8.h")
+    if(DEFINED ENV{DXSDK_DIR} AND EXISTS "$ENV{DXSDK_DIR}/Include/dxerr8.h")
         target_include_directories(Wazzal PRIVATE "$ENV{DXSDK_DIR}/Include")
         target_link_directories(Wazzal PRIVATE "$ENV{DXSDK_DIR}/Lib/x86")
     else()
         message(FATAL_ERROR
-            "MSVC requires the DirectX 8.1 SDK (d3d8.h/d3dx8.h). "
+            "MSVC requires a DirectX 8.1 SDK for dxerr8.h. "
             "Either install it and set DXSDK_DIR, or build with MinGW-w64 i686.")
     endif()
     target_compile_options(Wazzal PRIVATE /EHsc /wd4996)
-    target_link_libraries(Wazzal PRIVATE d3d8.lib dxguid.lib dinput8.lib dsound.lib
+    target_link_libraries(Wazzal PRIVATE d3d9.lib dxguid.lib dinput8.lib dsound.lib
         strmiids.lib quartz.lib ole32.lib winmm.lib)
 else()
     target_compile_options(Wazzal PRIVATE -fpermissive -Wno-write-strings)
     target_link_options(Wazzal PRIVATE -static -static-libgcc -static-libstdc++)
     target_link_libraries(Wazzal PRIVATE
-        d3d8 dxguid dxerr8 dinput8 dsound strmiids quartz ole32 winmm uuid)
+        d3d9 dxguid dxerr8 dinput8 dsound strmiids quartz ole32 winmm uuid)
 endif()
 
 install(TARGETS Wazzal RUNTIME DESTINATION .)

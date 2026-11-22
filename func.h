@@ -10,16 +10,15 @@
 #endif // _MSC_VER > 1000
 */
 #define D3D_OVERLOADS
-#include <d3d8.h>
-#include <d3dx8.h>
+#include <d3d9.h>
+#include <d3dx9compat.h>
 #include <dinput.h>
 #include <stdio.h>
 
 
 
-#pragma comment(lib, "d3dx8.lib")
 #pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "dinput.lib")
+#pragma comment(lib, "dinput8.lib")
 
 
 //-----------------------------------------------------------------------------
@@ -44,7 +43,7 @@ struct D3DDeviceInfo
 {
     // Device data
     D3DDEVTYPE   DeviceType;      // Reference, HAL, etc.
-    D3DCAPS8     d3dCaps;         // Capabilities of this device
+    D3DCAPS9     d3dCaps;         // Capabilities of this device
     const TCHAR* strDesc;         // Name of this device
     BOOL         bCanDoWindowed;  // Whether this device can work in windowed mode
 
@@ -67,7 +66,7 @@ struct D3DDeviceInfo
 struct D3DAdapterInfo
 {
     // Adapter data
-    D3DADAPTER_IDENTIFIER8 d3dAdapterIdentifier;
+    D3DADAPTER_IDENTIFIER9 d3dAdapterIdentifier;
     D3DDISPLAYMODE d3ddmDesktop;      // Desktop display mode for this adapter
 
     // Devices for this adapter

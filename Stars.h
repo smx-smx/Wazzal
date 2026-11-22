@@ -11,8 +11,8 @@
 #include <windowsx.h>
 #include <mmsystem.h>
 #include <ddraw.h>
-#include <d3d8.h>
-#include <d3dx8.h>
+#include <d3d9.h>
+#include <d3dx9compat.h>
 #include <dinput.h>
 #include <dsound.h>
 #include <stdio.h>
@@ -42,8 +42,7 @@ using namespace std;
 #define D3DFVF_WVERTEX (D3DFVF_XYZ|D3DFVF_NORMAL | D3DFVF_TEX1|D3DFVF_TEXCOORDSIZE2(0))
 
 
-#pragma comment(lib, "d3d8.lib")
-#pragma comment(lib, "d3dx8.lib")
+#pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "Strmiids.lib")
 #pragma comment(lib, "dsound.lib")
@@ -67,7 +66,7 @@ using namespace std;
 
 	struct esine
 	{
-		LPDIRECT3DVERTEXBUFFER8 kolmijako;
+		LPDIRECT3DVERTEXBUFFER9 kolmijako;
 		INT vert;
 	};
 
@@ -220,7 +219,7 @@ using namespace std;
 	struct light
 	{
 		bool on;
-		D3DLIGHT8 valo;	
+		D3DLIGHT9 valo;	
 		float aika;//paljonko aikaa t‰hteell‰
 	};
 
@@ -444,7 +443,7 @@ int free_mission(void);//finds a free mission
 void compute_missions(void);//calculates which missions are finished
 void render_missions(void);//draws diagram of missions
 int randomplanet(int number);
-HRESULT Screenshot(LPDIRECT3DDEVICE8 lpDevice,const char* lpszFileName,char line[200]);
+HRESULT Screenshot(LPDIRECT3DDEVICE9 lpDevice,const char* lpszFileName,char line[200]);
 void GetScreenshotFileName(string& FileName);
 void save_game(int slot);//saves game
 void render_menu(void);//renders game menus
@@ -459,7 +458,6 @@ void render_start_demo(void);
 void sound_init(void);
 void clean_display(void);
 void restore_display(void);
-HRESULT D3DUtil_SetDeviceCursor( LPDIRECT3DDEVICE8 pd3dDevice, HCURSOR hCursor );
 void startApplication(HINSTANCE hInstance);
 
 
@@ -616,7 +614,7 @@ void startApplication(HINSTANCE hInstance);
 
 
 	//D3DAdapterInfo    m_Adapters[10];
-	D3DCAPS8 deviceCaps;
+	D3DCAPS9 deviceCaps;
 	DWORD             m_dwNumAdapters;
 	DWORD             m_dwAdapter;
 	BOOL              m_bUseDepthBuffer;
@@ -640,7 +638,7 @@ void startApplication(HINSTANCE hInstance);
 	HRESULT BuildDeviceList(void);
 	BOOL FindDepthStencilFormat( UINT iAdapter, D3DDEVTYPE DeviceType,
 	D3DFORMAT TargetFormat, D3DFORMAT* pDepthStencilFormat );
-	HRESULT ConfirmDevice( D3DCAPS8* pCaps, DWORD dwBehavior, D3DFORMAT Format );
+	HRESULT ConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior, D3DFORMAT Format );
 
 
 
@@ -665,10 +663,10 @@ void startApplication(HINSTANCE hInstance);
 	int savuja;//montako savua kent‰ss‰
 	int luoteja;//montako luotia kent‰ss‰ lent‰‰*/
 	
-	LPDIRECT3D8 m_pD3D; // Used to create the D3DDevice
-	LPDIRECT3DDEVICE8 m_pDevice;
+	LPDIRECT3D9 m_pD3D; // Used to create the D3DDevice
+	LPDIRECT3DDEVICE9 m_pDevice;
 	D3DPRESENT_PARAMETERS m_d3dpp; 
-	//LPDIRECT3D8 m_pD3D;
+	//LPDIRECT3D9 m_pD3D;
 	//LPDIRECTDRAWSURFACE8 taka;	
 	//LPDIRECTDRAWSURFACE8 m_pPrimary;
 	//LPDIRECTDRAW7 m_pDD;
@@ -685,7 +683,7 @@ void startApplication(HINSTANCE hInstance);
 	DWORD m_LastTime;
 	bool quittaos;//ollaanko quittaamassa	
 	int materiaa;//montako materiaalia
-	D3DMATERIAL8 *mat;	
+	D3DMATERIAL9 *mat;	
 	ID3DXMatrixStack *matriisi;
 	LONG bug1,bug2,bug3;
 	float elapsed,elapsed2;
@@ -693,9 +691,9 @@ void startApplication(HINSTANCE hInstance);
 	//D3DDEVICEDESC8 desc3d;
 	float dx,dx2,dy,dz;//kameraa
 	float camx,camy,camz;//kameraa
-	LPDIRECT3DTEXTURE8 
+	LPDIRECT3DTEXTURE9 
 		*tausta;
-	LPDIRECT3DSURFACE8
+	LPDIRECT3DSURFACE9
 		*kuvia;
 
 	D3DFORMAT format;
