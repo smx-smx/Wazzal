@@ -68,7 +68,7 @@ using namespace std;
 	{
 		INT textuuri;//materiaali
 		INT textuuri2;//tekstuurin numero
-		INT matsku;//ihoa 0, ter‰st‰ 1, kangasta 2, miekka 3
+		INT matsku;//ihoa 0, ter√§st√§ 1, kangasta 2, miekka 3
 		//D3DVECTOR upleft,downright;//koko
 		esine loota;
 		float x,y,z;
@@ -143,14 +143,14 @@ using namespace std;
 
 	struct shipbase
 	{
-		bool enter,esc,up,down,left,right,one,two,three,four,space;//n‰pp‰imet
-		bool enter2,esc2,up2,down2,left2,right2,one2,two2,three2,four2,space2;//n‰pp‰imet edellisell‰ framella
+		bool enter,esc,up,down,left,right,one,two,three,four,space;//n√§pp√§imet
+		bool enter2,esc2,up2,down2,left2,right2,one2,two2,three2,four2,space2;//n√§pp√§imet edellisell√§ framella
 		float x1,y1,z1;//koordinaatit
 		float x2,y2,z2;//koordinaatit oli
-		float x3,y3,z3;//tˆrm‰yksen keskipisteen koordinaatit
+		float x3,y3,z3;//t√∂rm√§yksen keskipisteen koordinaatit
 		float rx,ry,rz;//kallistukset
 		float vx,vz,vr;//nopeudet suuntiinsa ja kierien
-		float motorright,motordown,motorleft,motorup;//oikea, ala, vasen ja ylˆs moottorit		
+		float motorright,motordown,motorleft,motorup;//oikea, ala, vasen ja yl√∂s moottorit		
 		float motor0time,motor1time,motor2time,motor3time;
 		float guntime[4];//timing of weapons
 		int nearstar,nearstar2;//is or was near a planet
@@ -203,7 +203,7 @@ using namespace std;
 		float aika;//paljonko aikaa
 		//float cos,sin,up;//kulmaa varten
 		float rotate;
-		float koko;//mink‰kokoinen savu on
+		float koko;//mink√§kokoinen savu on
 		float suurenee;//paljonko suurenee
 		float transparency;//0-1
 		bool pois;
@@ -213,13 +213,13 @@ using namespace std;
 	{
 		bool on;
 		D3DLIGHT9 valo;	
-		float aika;//paljonko aikaa t‰hteell‰
+		float aika;//paljonko aikaa t√§hteell√§
 	};
 
 	struct asteroidi
 	{
 		int sectorx,sectorz;//sektorit *100
-		int number;//mik‰ indexi
+		int number;//mik√§ indexi
 		float x,y,z;//paikka
 		float rx,ry,rz;//kulmat
 		float vx,vy,vz;//menossa
@@ -228,7 +228,7 @@ using namespace std;
 		int type;//0=tausta-asteroidi
 		float size;//koko
 		bool dead;//onko olemassa
-		float distance;//et‰isyys pelaajasta
+		float distance;//et√§isyys pelaajasta
 		bool visible;
 	};	
 
@@ -253,7 +253,7 @@ using namespace std;
 		bool dead;//onko ollenkaan olemassa
 		int picture;
 		float time;		
-		int fromweapon;//mist‰ aseesta ammuttu
+		int fromweapon;//mist√§ aseesta ammuttu
 		float distancesquare;//square of distance to player
 		int shooter;//who shot this bullet
 		int target;//which ship it was shot at
@@ -386,7 +386,7 @@ void init(void);
 bool createscreen(void);
 bool Render(void);
 bool luekuvat(void);
-void CleanUp(void);//h‰vitt‰‰ kamat
+void CleanUp(void);//h√§vitt√§√§ kamat
 BOOL draw(float r,float g,float b,obj *tavara);
 void poistaobj(obj *kohde, int indeksi);
 bool initkeyb(void);
@@ -398,20 +398,20 @@ void SetupPixelFog(DWORD dwColor, DWORD dwMode);//sumu
 void SetupVertexFog(float fStart, float fEnd,DWORD dwColor, DWORD dwMode, BOOL fUseRange, FLOAT fDensity);//sumu
 void valota(float x,float y,float z);//tekee valon
 void poistavalo(int a, int *b);//poistaa valon
-BOOL drawfast(obj *tavara);//piirt‰‰ nopeammin
+BOOL drawfast(obj *tavara);//piirt√§√§ nopeammin
 void kirjota(float size,float r,float g, float b,float x, float y, INT rivi,CHAR teksti[1000]);
 void cfg_save(void);//tallentaa asetukset
 void cfg_load(void);//lataa asetukset
-void soita(int samplenumero,float volume,float paikkax,float paikkaz);//soittaa ‰‰nen
+void soita(int samplenumero,float volume,float paikkax,float paikkaz);//soittaa √§√§nen
 void clearzbuffer(void);
 
 //pelin rutiinit
-void render_game(void);//piirt‰‰ peli‰
-void readkey_game(void);//lukee n‰pp‰imet
-void fly(shipbase *ship);//alukset lent‰‰
-void fly_asteroids(asteroidi *asteroid);//asteroidit lent‰‰
+void render_game(void);//piirt√§√§ peli√§
+void readkey_game(void);//lukee n√§pp√§imet
+void fly(shipbase *ship);//alukset lent√§√§
+void fly_asteroids(asteroidi *asteroid);//asteroidit lent√§√§
 void generate_particle(int picture, float aika, float paikkax,float paikkay,float paikkaz,float suuntax,float suuntay,float suuntaz,float speed,float vx,float vy,float vz);//particle animation starter
-void fly_particles(void);//pisteet lent‰‰
+void fly_particles(void);//pisteet lent√§√§
 void shoot(shipbase *shooter, int type, float time, float placex,float placey,float placez,float directionx,float directiony,float directionz,float vx,float vy,float vz);//fire a bullet
 void fly_bullet(bulletbase *bullet);//bullets fly
 void shoot_asteroid(int picture, float size, int type, float x, float y, float z, float rx, float ry, float rz, float vx, float vy, float vz, float vrx, float vry, float vrz);//fires an asteroid
@@ -455,7 +455,7 @@ void startApplication(HINSTANCE hInstance);
 
 
 
-	//pelin sis‰llˆlliset objektit		
+	//pelin sis√§ll√∂lliset objektit		
 	
 	const int maksimivaloja=10;	
 	const int maksimisavuja=200;	
@@ -471,7 +471,7 @@ void startApplication(HINSTANCE hInstance);
 
 	int pelivaihe,pelivaihe_oli;
 	int pelivaihe2,pelivaihe2_oli;
-	int keytimer;//n‰pp‰imistˆn ajastin	
+	int keytimer;//n√§pp√§imist√∂n ajastin	
 	const float maxvisible =25000.0f;
 	float pelinopeus;//pelin nopeus
 	bool options[10];//asetukset
@@ -500,7 +500,7 @@ void startApplication(HINSTANCE hInstance);
 	float aspect;//camera's aspect ratio
 	int dialog_choice;//player's choise in dialog
 	battles battle;//next battle
-	encounter shipslot[maximum_shipslot];//player¥s ships
+	encounter shipslot[maximum_shipslot];//player¬¥s ships
 	encounter shipslot_battle[maximum_shipslot];//disabled ships
 	pvertex vertexletters[2][6*1000];
 	char temprivi[300],rivi[300];
@@ -525,9 +525,9 @@ void startApplication(HINSTANCE hInstance);
 	//char savenimi[256];//tallennuksen nimi
 	float game_saved_timer;
 	char m_filenames[10][256];//tallennustiedostojen nimet
-	int kirjaintan[10];//montako kirjainta tallennusnimiss‰ on
+	int kirjaintan[10];//montako kirjainta tallennusnimiss√§ on
 	bool loadable[10];//voiko ladata tallennuksen
-	int tallennuspaikka;//mik‰ tallennus on valittuna
+	int tallennuspaikka;//mik√§ tallennus on valittuna
 	int selected_left_menu;//selected menu item
 	int selected_option;//selected option in menu
 	int focus;//which part of menu has focus
@@ -646,15 +646,15 @@ void startApplication(HINSTANCE hInstance);
 	//DIMOUSESTATE		  mousestate2;
 	char  buffer[256], buffer2[256];
 	float mousex, mousey, mousex2, mousey2;
-	float plusmiinus;//n‰pisk‰ll‰ s‰‰dett‰v‰ tempfloat
-	int key[20];//pelin n‰pp‰imet	
-	bool pressed,pressed2;//onko yht‰‰n n‰pp‰int‰ painettu
-	int down,down2;//mik‰ n‰pp‰in on pohjassa
+	float plusmiinus;//n√§pisk√§ll√§ s√§√§dett√§v√§ tempfloat
+	int key[20];//pelin n√§pp√§imet	
+	bool pressed,pressed2;//onko yht√§√§n n√§pp√§int√§ painettu
+	int down,down2;//mik√§ n√§pp√§in on pohjassa
 	
 
-	/*int ukkoja;//montako ukkoa kent‰ss‰
-	int savuja;//montako savua kent‰ss‰
-	int luoteja;//montako luotia kent‰ss‰ lent‰‰*/
+	/*int ukkoja;//montako ukkoa kent√§ss√§
+	int savuja;//montako savua kent√§ss√§
+	int luoteja;//montako luotia kent√§ss√§ lent√§√§*/
 	
 	LPDIRECT3D9 m_pD3D; // Used to create the D3DDevice
 	LPDIRECT3DDEVICE9 m_pDevice;

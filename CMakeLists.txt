@@ -42,11 +42,11 @@ if(MSVC)
             "MSVC requires a DirectX 8.1 SDK for dxerr8.h. "
             "Either install it and set DXSDK_DIR, or build with MinGW-w64 i686.")
     endif()
-    target_compile_options(Wazzal PRIVATE /EHsc /wd4996)
+    target_compile_options(Wazzal PRIVATE /EHsc /wd4996 /source-charset:utf-8 /execution-charset:.1252)
     target_link_libraries(Wazzal PRIVATE d3d9.lib d3dx9.lib dxguid.lib dinput8.lib dsound.lib
         strmiids.lib quartz.lib ole32.lib winmm.lib)
 else()
-    target_compile_options(Wazzal PRIVATE -fpermissive -Wno-write-strings)
+    target_compile_options(Wazzal PRIVATE -fpermissive -Wno-write-strings -finput-charset=UTF-8 -fexec-charset=CP1252)
     target_link_options(Wazzal PRIVATE -static -static-libgcc -static-libstdc++)
     target_link_libraries(Wazzal PRIVATE
         d3d9 d3dx9 dxguid dxerr8 dinput8 dsound strmiids quartz ole32 winmm uuid)

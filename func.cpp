@@ -304,7 +304,7 @@ D3DMATRIX Scale(const float size)
 
 D3DMATRIX ViewMatrix(const D3DVECTOR from,      // camera location
                             const D3DVECTOR at,        // camera look-at target
-                            const D3DVECTOR world_up,  // world’s up, usually 0, 1, 0
+                            const D3DVECTOR world_up,  // worldâ€™s up, usually 0, 1, 0
                             const float roll)          // clockwise roll around
                                                        //    viewing direction, 
                                                        //    in radians
@@ -400,7 +400,7 @@ bool viivaviiva(bool suora2, bool *osuma,float *osumax,float *osumaz,float piste
 	kk2=(float)(piste4z-piste3z)/(piste4x-piste3x+virhetarkkuus);
 	/*if(piste2x-piste1x==0)kk1=650000000;
 	if(piste4x-piste3x==0)kk2=650000000;*/
-	//if(kk1!=kk2)//jos eivät ole saman suuntaisia
+	//if(kk1!=kk2)//jos eivÃ¤t ole saman suuntaisia
 	{
 
 		
