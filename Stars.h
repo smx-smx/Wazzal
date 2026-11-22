@@ -7,10 +7,8 @@
 #endif // _MSC_VER > 1000
 
 #include "resource.h"
-#define D3D_OVERLOADS
 #include <windowsx.h>
 #include <mmsystem.h>
-#include <ddraw.h>
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dinput.h>
@@ -47,11 +45,6 @@ using namespace std;
 #pragma comment(lib, "Strmiids.lib")
 #pragma comment(lib, "dsound.lib")
 
-
-/*#pragma comment(lib, "ddraw.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "dinput.lib")
-#pragma comment(lib, "dsound.lib")*/
 
 	struct vvertex {
 				D3DVECTOR position;

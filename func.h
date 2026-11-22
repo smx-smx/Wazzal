@@ -9,7 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 */
-#define D3D_OVERLOADS
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dinput.h>

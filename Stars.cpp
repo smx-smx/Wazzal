@@ -226,7 +226,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    hInst = hInstance; // Store instance handle in our global variable
    RECT rDesktop;
-    SystemParametersInfo(SPI_GETWORKAREA, NULL, &rDesktop, NULL);
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &rDesktop, 0);
    DWORD winstyle = WS_POPUP;
    int winw = 1024, winh = 768;
    if (windowed_mode) {
@@ -343,14 +343,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				mouse_button_1=false;
 			}
 			break;
-		/*case WM_SETCURSOR:
-            // Turn off Windows cursor in fullscreen mode
-            {
-                SetCursor( NULL );
-                    m_pDevice->ShowCursor( FALSE );
-                return TRUE; // prevent Windows from setting cursor to window class cursor
-            }
-            break;*/
 		/*case WM_CHAR:	//näppäimistön luku nimen ottoa varten		
 			{
 				if(pelivaihe==7)
@@ -562,12 +554,6 @@ void init(void)
 	mousex=(float)(SCREEN_WIDTH/2);
 	mousey=(float)(SCREEN_HEIGHT/2);
 	
-	DDCOLORKEY color;	
-	color.dwColorSpaceHighValue=0x000000;//CLR_INVALID on ylänurkka
-	color.dwColorSpaceLowValue=0x000000;
-
-	//tausta[15]->SetColorKey(DDCKEY_SRCBLT,&color);
-
 	//ladataan objektit //muista lisätä mallit[n]
 	mallit[0].malli= new obj[objnum0];	
 	mallit[1].malli= new obj[objnum1];
@@ -1209,13 +1195,13 @@ BOOL lataa(char nimi[200],obj *kohde,BOOL mirror,BOOL miekkakala)
 				//kohde[b].sisus[q].loota.kolmijako = new LPDIRECT3DVERTEXBUFFER9[kohde[b].count];
 				kohde[b].sisus[q].loota.vert = faces*3;
 
-				kohde[b].upleft.x=NULL;
-				kohde[b].upleft.y=NULL;
-				kohde[b].upleft.z=NULL;
+				kohde[b].upleft.x=0.0f;
+				kohde[b].upleft.y=0.0f;
+				kohde[b].upleft.z=0.0f;
 				
-				kohde[b].downright.x=NULL;
-				kohde[b].downright.y=NULL;
-				kohde[b].downright.z=NULL;
+				kohde[b].downright.x=0.0f;
+				kohde[b].downright.y=0.0f;
+				kohde[b].downright.z=0.0f;
 
 				for (i=0; i<kolme; i++)
 				{
@@ -1349,7 +1335,7 @@ BOOL lataa(char nimi[200],obj *kohde,BOOL mirror,BOOL miekkakala)
                                                   D3DUSAGE_WRITEONLY  , D3DFVF_WVERTEX,
                                                   D3DPOOL_DEFAULT, &kohde[b].sisus[q].loota.kolmijako, NULL );
 				VOID* pVertices;
-				kohde[b].sisus[q].loota.kolmijako->Lock( 0, 0, (BYTE**)&pVertices, 0 );					
+				kohde[b].sisus[q].loota.kolmijako->Lock( 0, 0, (void**)&pVertices, 0 );					
 				memcpy( pVertices, vertex, kohde[b].sisus[q].loota.vert*sizeof(vvertex) );
 				kohde[b].sisus[q].loota.kolmijako->Unlock();
 			}
@@ -2457,9 +2443,6 @@ bool luekuvat(void)
 		  NULL
 		);
 
-		/*color.dwColorSpaceHighValue=0x000000;
-		color.dwColorSpaceLowValue=0x000000;
-		kuvia[q]->SetColorKey(DDCKEY_SRCBLT,&color);*/
 	}
 	//DeleteObject(hbm);
 	//DeleteObject(&bminfo);
@@ -3034,13 +3017,6 @@ void clearzbuffer(void){
 	//if(!options[3]){
 		m_pDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER , 0x00000000, 1, 0 );
 	//}
-	/*else{	
-		DDBLTFX ddbltfx;	
-		memset(&ddbltfx, 0, sizeof(ddbltfx));
-		ddbltfx.dwSize = sizeof(DDBLTFX);
-		ddbltfx.dwFillDepth=0x00FFFFFF;
-		zpuskuri->Blt(NULL,NULL,NULL,DDBLT_DEPTHFILL,&ddbltfx);
-	}*/
 }
 
 float fHatRandom(float fRange)
@@ -10110,7 +10086,7 @@ HRESULT Screenshot(LPDIRECT3DDEVICE9 lpDevice, const char* lpszFileName,char lin
     LPBYTE Bits = NULL;         // bitmap bits of the DIB
     FILE* f = NULL;             // BMP file handle
 
-#define BITMAP_FILE_SIGNATURE 'MB'
+#define BITMAP_FILE_SIGNATURE 0x4D42
 
     // check whether parameters are valid
     if (!lpDevice)
@@ -12130,7 +12106,7 @@ void playsound(int number,float volume,float soundx,float soundz,float listenerx
 	if(volume<0)volume=0;
 	if(volume>1)volume=1;
 
-	g_pSound[number]->Play( 0, NULL,volume*master_volume);
+	g_pSound[number]->Play( 0, 0,volume*master_volume);
 }
 void render_start_demo(void){
 
